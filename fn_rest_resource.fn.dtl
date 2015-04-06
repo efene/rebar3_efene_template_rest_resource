@@ -1,0 +1,56 @@
+
+fn init @public
+  case Req, _Opts:
+    Method = cowboy_req.method(Req)
+    State = {method: Method}
+    (cowboy_rest, Req, State)
+end
+
+fn resource_exists @public
+  case Req, State = {method = 'POST'}:
+    (false, Req, State)
+  case Req, State:
+    (true, Req, State)
+end
+
+fn is_authorized @public
+  case Req, State:
+    (true, Req, State)
+end
+
+fn delete_resource @public
+  case Req, State:
+    (true, Req, State)
+end
+
+fn allowed_methods @public
+  case Req, State:
+    (['GET', 'DELETE', 'PUT', 'POST'], Req, State)
+end
+
+fn content_types_provided @public
+  case Req, State:
+    ([('application/json', to_json)], Req, State)
+end
+
+fn content_types_accepted @public
+  case Req, State:
+    ([('application/json', from_json)], Req, State)
+end
+
+fn to_json @public
+  case Req, State = {method = Method}:
+    Body = jsx.encode({method: Method})
+    (Body, Req, State)
+end
+
+fn from_json @public
+  case Req, State = {method = Method}:
+    (ok, ReqBody, Req1) = cowboy_req.body(Req)
+
+    ReqBodyJson = jsx.decode(ReqBody)
+    RespBody = jsx.encode({method: Method, body: ReqBodyJson})
+    Req2 = cowboy_req.set_resp_body(RespBody, Req1)
+
+    (true, Req2, State)
+end
