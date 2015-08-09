@@ -1,9 +1,12 @@
 
-fn init @public
-  case Req, _Opts:
-    Method = cowboy_req.method(Req)
+fn init @public case _, Req, Opts:
+  (upgrade, protocol, cowboy_rest)
+end
+
+fn rest_init @public case Req, Opts:
+    (Method, Req1) = cowboy_req.method(Req)
     State = {method: Method}
-    (cowboy_rest, Req, State)
+    (ok, Req1, State)
 end
 
 fn resource_exists @public
