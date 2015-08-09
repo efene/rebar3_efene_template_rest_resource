@@ -2,4 +2,4 @@
 {variables, [
     {name, "myresource", "Name of the resource"}
 ]}.
-{template, "fn_rest_resource.fn.dtl", "src/{{name}}_rest_handler.fn"}.
+{template, "fn_rest_resource.fn.dtl", "{{name}}_rest_handler.fn"}.
